@@ -5,7 +5,7 @@ const vlmimg = new Image();
 const input = document.getElementById("image-input");
 const form = document.getElementById("generate-meme");
 const canvas = document.getElementById('user-image');
-const ctx = null;
+ ctx = canvas.getContext('2d');
  const rst = document.querySelector("[type ='reset']");
 const vlm = document.querySelector("[type = 'range']");
   const but = document.querySelector("[type = 'button']");
@@ -15,8 +15,7 @@ const vg = document.getElementById("volume-group");
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
   // TODO
-  
-   ctx = canvas.getContext('2d');
+  ctx.clearRect(usable.startX, usable.startY, usable.width, usable.height);
   ctx.fillStyle = "#000000";
  
   sbm.disabled = false;
