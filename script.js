@@ -21,7 +21,8 @@ img.addEventListener('load', () => {
   sbm.disabled = false;
   rst.disabled = true;
   but.disabled = true;
-  img.src = document.getElementById("image-input").value;
+ const objectURL = URL.createObjectURL(document.getElementById("image-input").value);
+  img.src = objectURL;
   
   ctx.drawImage(img, usable.startX, usable.startY, usable.width, usable.height);
   
