@@ -14,7 +14,7 @@ img.addEventListener('load', () => {
   sbm.disabled = false;
   rst.disabled = true;
   but.disabled = true;
-  var img = document.querySelector("[src ="icons/volume-level-3.svg" ]");
+  img.src = document.getElementById("image-input").value;
   var usable = getDimensions(750, 500, 400, 400);
   ctx.drawImage(img, usable.startX, usable.startY, usable.width, usable.height);
   
