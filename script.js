@@ -24,7 +24,10 @@ img.addEventListener('load', () => {
   // - Clear the form when a new image is selected
   // - If you draw the image to canvas here, it will update as soon as a new image is selected
 });
-
+input.addEventListener('change' , () =>{
+   img.src = document.getElementById("image-input").value;
+  img.alt = document.getElementById("image-input").name;
+});
 /**
  * Takes in the dimensions of the canvas and the new image, then calculates the new
  * dimensions of the image so that it fits perfectly into the Canvas and maintains aspect ratio
