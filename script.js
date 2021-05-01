@@ -53,8 +53,10 @@ rst.addEventListener('click', () => {
 but.addEventListener('click', () =>{
 let output = new SpeechSynthesisUtterance(document.getElementById("text-top").value);
   output.voice = document.getElementById("voice-selection").value;
+ output.volume = vlm.value/10;
 let outputdos = new SpeechSynthesisUtterance(document.getElementById("text-bottom").value);
   outputdos.voice = docuement.getElementById("voice-selection").value;
+ outputdos.volume = vlm.value/10;
 speechSynthesis.speak(output);
   speechSynthesis.speak(outputdos);
 });
