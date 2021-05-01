@@ -15,7 +15,7 @@ const vg = document.getElementById("volume-group");
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
   // TODO
-  ctx.clearRect(usable.startX, usable.startY, usable.width, usable.height);
+  ctx.clearRect(0, 0, 500, 750);
   ctx.fillStyle = "#000000";
  
   sbm.disabled = false;
