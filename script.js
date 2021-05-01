@@ -1,21 +1,29 @@
 // script.js
 
-const img = new Image(); // used to load image from <input> and draw to canvas
-
+const img = new Image();// used to load image from <input> and draw to canvas
+const vlmimg = new Image();
+const input = document.getElementById("image-input");
+const form = document.getElementById("generate-meme");
+const canvas = document.getElementById('user-image');
+const ctx = null;
+ const rst = document.querySelector("[type ='reset']");
+const vlm = document.querySelector("[type = 'range']");
+  const but = document.querySelector("[type = 'button']");
+  const sbm = document.querySelector("[type = 'submit']");
+const usable = getDimensions(750, 500, 400, 400);
+const vg = document.getElementById("volume-group");
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
   // TODO
-  const canvas = document.getElementById('user-image');
-  const ctx = canvas.getContext('2d');
+  
+   ctx = canvas.getContext('2d');
   ctx.fillStyle = "#000000";
-  const rst = document.querySelector("[type ='reset']");
-  const but = document.querySelector("[type = 'button']");
-  const sbm = document.querySelector("[type = 'submit']");
+ 
   sbm.disabled = false;
   rst.disabled = true;
   but.disabled = true;
   img.src = document.getElementById("image-input").value;
-  var usable = getDimensions(750, 500, 400, 400);
+  
   ctx.drawImage(img, usable.startX, usable.startY, usable.width, usable.height);
   
   
@@ -24,9 +32,50 @@ img.addEventListener('load', () => {
   // - Clear the form when a new image is selected
   // - If you draw the image to canvas here, it will update as soon as a new image is selected
 });
-input.addEventListener('change' , () =>{
+input.addEventListener('change' , () => {
    img.src = document.getElementById("image-input").value;
   img.alt = document.getElementById("image-input").name;
+});
+form.addEventListener('submit', () => {
+  var top = document.getElementById("text-top").value;
+  var bottom = document.getElementById("text-bottom").value;
+  ctx = canvas.getContext('2d');
+  ctx.fillText(top, 250, 150);
+  ctx.fillText(bottom, 250, 600);
+  sbm.disabled = true;
+   rst.disabled = false;
+  but.disabled = false;
+});
+rst.addEventListener('click', () => {
+  ctx = canvas.getContext('2d');
+  ctx.clearRect(usable.startX, usable.startY, usable.width, usable.height);
+});
+but.addEventListener('click', () =>{
+let output = new SpeechSynthesisUtterance(document.getElementById("text-top").value);
+  output.voice = document.getElementById("voice-selection").value;
+let outputdos = new SpeechSynthesisUtterance(document.getElementById("text-bottom").value);
+  outputdos.voice = docuement.getElementById("voice-selection").value;
+speechSynthesis.speak(output);
+  speechSynthesis.speak(outputdos);
+});
+vg.addEventListener('input', () =>{
+  if(vlm.value == 0){
+    vlmimg.src ="icons/volume-level-0.svg";
+    vlmimg.alt = "volume-level-0.svg";
+  }
+  else if (vlm.value <= 33){
+     vlmimg.src ="icons/volume-level-1.svg";
+    vlmimg.alt = "volume-level-1.svg";
+  }
+  else if (vlm.value <= 66){
+     vlmimg.src ="icons/volume-level-2.svg";
+    vlmimg.alt = "volume-level-2.svg";
+  }
+  else{  
+     vlmimg.src ="icons/volume-level-3.svg";
+    vlmimg.alt = "volume-level-3.svg";
+  }
+  
 });
 /**
  * Takes in the dimensions of the canvas and the new image, then calculates the new
