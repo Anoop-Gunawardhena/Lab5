@@ -23,8 +23,7 @@ img.addEventListener('load', () => {
 ctx.fillRect(0, 0, 500, 750);
  
  
- const objectURL = URL.createObjectURL(document.getElementById("image-input").value);
-  img.src = objectURL;
+
   ctx.drawImage(img, usable.startX, usable.startY, usable.width, usable.height);
   
  
@@ -34,7 +33,8 @@ ctx.fillRect(0, 0, 500, 750);
   // - If you draw the image to canvas here, it will update as soon as a new image is selected
 });
  input.addEventListener('change' , () => {
-   img.src = document.getElementById("image-input").value;
+   const objectURL = URL.createObjectURL(document.getElementById("image-input").value);
+  img.src = objectURL;
   img.alt = document.getElementById("image-input").name;
 });
 form.addEventListener('submit', () => {
