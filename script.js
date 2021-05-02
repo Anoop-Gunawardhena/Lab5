@@ -26,13 +26,7 @@ img.addEventListener('load', () => {
   
   ctx.drawImage(img, usable.startX, usable.startY, usable.width, usable.height);
   
-  
-  // Some helpful tips:
-  // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
-  // - Clear the form when a new image is selected
-  // - If you draw the image to canvas here, it will update as soon as a new image is selected
-});
-input.addEventListener('change' , () => {
+  input.addEventListener('change' , () => {
    img.src = document.getElementById("image-input").value;
   img.alt = document.getElementById("image-input").name;
 });
@@ -79,6 +73,12 @@ vg.addEventListener('input', () =>{
   }
   
 });
+  // Some helpful tips:
+  // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
+  // - Clear the form when a new image is selected
+  // - If you draw the image to canvas here, it will update as soon as a new image is selected
+});
+
 /**
  * Takes in the dimensions of the canvas and the new image, then calculates the new
  * dimensions of the image so that it fits perfectly into the Canvas and maintains aspect ratio
