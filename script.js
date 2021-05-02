@@ -1,85 +1,152 @@
 // script.js
 
-const img = new Image();// used to load image from <input> and draw to canvas
-const vlmimg = new Image();
-const input = document.getElementById("image-input");
-const form = document.getElementById("generate-meme");
-const canvas = document.getElementById('user-image');
- ctx = canvas.getContext('2d');
- const rst = document.querySelector("[type ='reset']");
-const vlm = document.querySelector("[type = 'range']");
-  const but = document.querySelector("[type = 'button']");
-  const sbm = document.querySelector("[type = 'submit']");
-const usable = getDimensions(750, 500, 400, 400);
-const vg = document.getElementById("volume-group");
+const img = new Image(); // used to load image from <input> and draw to canvas
+//============================
+//Select Elements
+//============================
+let getMeme = document.getElementById("generate-meme");
+let genButton = document.getElementsByTagName("button")[0];
+let clrButton = document.getElementsByTagName("button")[1];
+let readButton = document.getElementsByTagName("button")[2];
+let loadImage = document.getElementById("image-input");
+let voiceVolume = document.getElementsByTagName("input")[3];
+let canvas = document.getElementById('user-image');
+let ctx = canvas.getContext('2d');
+
+//============
+// State Variables
+// ===========
+let lang;
+let vol = 1;
+let getVoices = [];
+
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
-  // TODO
-  ctx.clearRect(0, 0, 500, 750);
-  sbm.disabled = false;
-  rst.disabled = true;
-  but.disabled = true;
-  ctx.fillStyle = "#000000";
-ctx.fillRect(0, 0, 500, 750);
- 
- 
+    ctx.clearRect(0, 0, 400, 400); // given size
+    let topText = document.getElementById('text-top');
+    let bottomText = document.getElementById('text-bottom');
+    // set texts to empty
+    topText.value = "";
+    bottomText.value = "";
+    //Change button state
+    clrButton.disabled = true;
+    readButton.disabled = true;
+    genButton.disabled = false;
 
-  ctx.drawImage(img, usable.startX, usable.startY, usable.width, usable.height);
-  
- 
-  // Some helpful tips:
-  // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
-  // - Clear the form when a new image is selected
-  // - If you draw the image to canvas here, it will update as soon as a new image is selected
-});
- input.addEventListener('change' , () => {
-   img.src  = URL.createObjectURL(document.getElementById("image-input").value);
-  img.alt = document.getElementById("image-input").name;
-});
-form.addEventListener('submit', () => {
-  var top = document.getElementById("text-top").value;
-  var bottom = document.getElementById("text-bottom").value;
-  ctx = canvas.getContext('2d');
-  ctx.fillText(top, 250, 150);
-  ctx.fillText(bottom, 250, 600);
-  sbm.disabled = true;
-   rst.disabled = false;
-  but.disabled = false;
-});
-rst.addEventListener('click', () => {
-  ctx = canvas.getContext('2d');
-  ctx.clearRect(usable.startX, usable.startY, usable.width, usable.height);
-});
-but.addEventListener('click', () =>{
-let output = new SpeechSynthesisUtterance(document.getElementById("text-top").value);
-  output.voice = document.getElementById("voice-selection").value;
- output.volume = vlm.value/10;
-let outputdos = new SpeechSynthesisUtterance(document.getElementById("text-bottom").value);
-  outputdos.voice = docuement.getElementById("voice-selection").value;
- outputdos.volume = vlm.value/10;
-speechSynthesis.speak(output);
-  speechSynthesis.speak(outputdos);
-});
-vg.addEventListener('input', () =>{
-  if(vlm.value == 0){
-    vlmimg.src ="icons/volume-level-0.svg";
-    vlmimg.alt = "volume-level-0.svg";
-  }
-  else if (vlm.value <= 33){
-     vlmimg.src ="icons/volume-level-1.svg";
-    vlmimg.alt = "volume-level-1.svg";
-  }
-  else if (vlm.value <= 66){
-     vlmimg.src ="icons/volume-level-2.svg";
-    vlmimg.alt = "volume-level-2.svg";
-  }
-  else{  
-     vlmimg.src ="icons/volume-level-3.svg";
-    vlmimg.alt = "volume-level-3.svg";
-  }
-  
+    // Cover cnavas with black then set the img. 
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, 400, 400);
+
+    let imageDimension = getDimmensions(400, 400, img.width, img.height);
+    ctx.drawImage(img, imageDimension.startX, imageDimension.startY, imageDimension.width, imageDimension.height);
+
 });
 
+//Load Image EventListener
+loadImage.addEventListener('change', () => {
+    let path = URL.createObjectURL(loadImage.files[0]);
+    let splice = path.split("\\");
+    img.src = path;
+    img.alt = splice[splice.length - 1];
+});
+
+
+// MemeText Event Listener
+getMeme.addEventListener('submit', (event) => {
+    //if the event does not get explicitly handled, its default action should not be taken as it normally would be.
+    event.preventDefault();
+    let topText = document.getElementById('text-top');
+    let bottomText = document.getElementById('text-bottom');
+    //Font style for meme
+    ctx.font = "30px impact";
+    ctx.fillStyle = "white";
+    ctx.strokeStyle = "black";
+    ctx.textAllign = "center";
+    ctx.fillText(bottomText.value, 200, 385);
+    ctx.fillText(topText.value, 200, 35);
+    ctx.strokeText(bottomText.value, 200, 385);
+    ctx.strokeText(topText.value, 200, 35);
+
+    // now enable them
+    clrButton.disabled = false;
+    readButton.disabled = false;
+
+})
+
+//Clear the Canvas now using clear button Event Listener
+clrButton.addEventListener('click', () => {
+    let topText = document.getElementById('text-top');
+    topText.value = "";
+    let bottomText = document.getElementById('text-bottom');
+    bottomText.value = "";
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+})
+
+//====================
+// Speech API Speech Synthesis Helper Functions
+//====================
+speechSynthesis.addEventListener("voiceschanged", () => {
+    getVoices = speechSynthesis.getVoices();
+    let voiceSelection = document.getElementById("voice-selection");
+    voiceSelection.innerHTML = "";
+    let i = 0;
+    while (i < getVoices.length) {
+        let optionSelect = document.createElement('option');
+        optionSelect.textContent = getVoices[i].name + ' (' + getVoices[i].lang + ')';
+        // for default case
+        if (getVoices[i].default)
+            optionSelect.textContent += ' -- DEFAULT';
+
+        // set the langauge and name and append to DOM Tree
+        optionSelect.setAttribute('data-lang', getVoices[i].lang);
+        optionSelect.setAttribute('data-name', getVoices[i].name);
+        voiceSelection.appendChild(optionSelect);
+        i += 1;
+    }
+    // Set a default value for langauge 
+    voiceSelection.disabled = false;
+    lang = getVoices[0];
+    //Change from default langauge:
+    voiceSelection.addEventListener("change", () => {
+        let selectLangauge = getVoices.selectedOptions[0].getAttribute('data-name');
+        let i = 0;
+        while (i < getVoices.length) {
+            if (selectLangauge === getVoices[i].name)
+                lang = getVoices[i]
+            i++;
+        }
+    });
+
+}); // END SpeechSynthesis
+
+// text to speech Event Listener
+readButton.addEventListener('click', () => {
+    let topText = document.getElementById('text-top');
+    let bottomText = document.getElementById('text-bottom');
+    let tts = new SpeechSynthesisUtterance(topText.value + "..." + bottomText.value);
+    tts.voice = lang;
+    tts.volume = vol;
+    speechSynthesis.speak(tts);
+});
+
+//Change volume event listener
+voiceVolume.addEventListener("input", () => {
+    vol = (voiceVolume.value / 100);
+    let soundIcon = document.getElementsByTagName('img')[0]; // no volume
+    if (voiceVolume.value == 0) {
+        soundIcon.src = "icons/volume-level-0.svg";
+        soundIcon.alt = "Volume Level 0: 0";
+    } else if (voiceVolume.value >= 1 && voiceVolume.value <= 33) { // low volume
+        soundIcon.src = "icons/volume-level-1.svg";
+        soundIcon.alt = "Volume Level 1: 1-33";
+    } else if (voiceVolume.value >= 34 && voiceVolume.value <= 66) { // medium volume
+        soundIcon.src = "icons/volume-level-2.svg";
+        soundIcon.alt = "Volume Level 2: 34-66";
+    } else if (voiceVolume.value >= 67 && voiceVolume.value <= 100) { // high volume 
+        soundIcon.src = "icons/volume-level-3.svg";
+        soundIcon.alt = "Volume Level 3: 67-100";
+    }
+});
 /**
  * Takes in the dimensions of the canvas and the new image, then calculates the new
  * dimensions of the image so that it fits perfectly into the Canvas and maintains aspect ratio
