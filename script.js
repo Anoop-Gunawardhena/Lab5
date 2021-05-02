@@ -16,17 +16,24 @@ const vg = document.getElementById("volume-group");
 img.addEventListener('load', () => {
   // TODO
   ctx.clearRect(0, 0, 500, 750);
-  ctx.fillStyle = "#000000";
- 
   sbm.disabled = false;
   rst.disabled = true;
   but.disabled = true;
+  ctx.fillStyle = "#000000";
+ctx.fillRect(0, 0, 500, 750);
+ 
+ 
  const objectURL = URL.createObjectURL(document.getElementById("image-input").value);
   img.src = objectURL;
-  
   ctx.drawImage(img, usable.startX, usable.startY, usable.width, usable.height);
   
-  input.addEventListener('change' , () => {
+ 
+  // Some helpful tips:
+  // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
+  // - Clear the form when a new image is selected
+  // - If you draw the image to canvas here, it will update as soon as a new image is selected
+});
+ input.addEventListener('change' , () => {
    img.src = document.getElementById("image-input").value;
   img.alt = document.getElementById("image-input").name;
 });
@@ -72,11 +79,6 @@ vg.addEventListener('input', () =>{
     vlmimg.alt = "volume-level-3.svg";
   }
   
-});
-  // Some helpful tips:
-  // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
-  // - Clear the form when a new image is selected
-  // - If you draw the image to canvas here, it will update as soon as a new image is selected
 });
 
 /**
